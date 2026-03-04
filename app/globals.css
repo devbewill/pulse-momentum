@@ -2,7 +2,7 @@
 
 :root {
   --font-geist: 'Geist', system-ui, sans-serif;
-  --neon: #B5FF4D;
+  --neon: #FF00FF;
 }
 
 * { box-sizing: border-box; }

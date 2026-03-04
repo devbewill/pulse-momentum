@@ -17,10 +17,10 @@ interface SuggestionCardProps {
 }
 
 const BREAKDOWN_ROWS = [
-  { key: 'SEM', fullName: 'SEMANTIC',    desc: 'similarità vettoriale tra embedding', weight: WEIGHT_SIMILARITY,    field: 'similarity'  as const },
-  { key: 'REC', fullName: 'RECENCY',     desc: 'decadimento esponenziale nel tempo',  weight: WEIGHT_RECENCY,       field: 'recency'     as const },
-  { key: 'KWD', fullName: 'KEYWORD',     desc: 'overlap di parole chiave nel testo',  weight: WEIGHT_KEYWORD_BOOST, field: 'keyword'     as const },
-  { key: 'INT', fullName: 'INTERACTION', desc: 'frequenza di accesso e utilizzo',     weight: WEIGHT_INTERACTION,   field: 'interaction' as const },
+  { key: 'SEM', fullName: 'SEMANTIC',    desc: 'How similar the content is semantically (vector embedding)', weight: WEIGHT_SIMILARITY,    field: 'similarity'  as const },
+  { key: 'REC', fullName: 'RECENCY',     desc: 'Recent notes are more relevant (exponential decay from today)',  weight: WEIGHT_RECENCY,       field: 'recency'     as const },
+  { key: 'KWD', fullName: 'KEYWORD',     desc: 'Bonus if query words appear in the note (text match)',  weight: WEIGHT_KEYWORD_BOOST, field: 'keyword'     as const },
+  { key: 'INT', fullName: 'INTERACTION', desc: 'Notes you consulted more often have more weight (usage frequency)',     weight: WEIGHT_INTERACTION,   field: 'interaction' as const },
 ]
 
 export function SuggestionCard({ suggestion, isSelected, onSelect, index }: SuggestionCardProps) {
@@ -30,10 +30,10 @@ export function SuggestionCard({ suggestion, isSelected, onSelect, index }: Sugg
     <button
       onClick={() => onSelect(beat._id)}
       className={[
-        'suggestion-enter group relative flex w-full flex-col border px-4 py-3.5 text-left transition-all duration-100',
+        'suggestion-enter group relative flex w-full flex-col border-[5px] border-zinc-950 px-4 py-3.5 text-left transition-all duration-100',
         isSelected
-          ? 'border-zinc-950 bg-zinc-950 text-white'
-          : 'border-zinc-200 bg-white hover:border-zinc-950',
+          ? 'bg-zinc-950 text-white'
+          : 'bg-white hover:bg-zinc-50',
       ].join(' ')}
       style={{ animationDelay: `${index * 40}ms` }}
       data-score={score.toFixed(4)}
@@ -47,7 +47,7 @@ export function SuggestionCard({ suggestion, isSelected, onSelect, index }: Sugg
             isSelected ? 'text-white/70' : (matchStrength === 'strong' ? 'text-zinc-950' : 'text-zinc-400'),
           ].join(' ')}
         >
-          {matchStrength === 'strong' ? 'Match Forte' : 'Concettuale'}
+          {matchStrength === 'strong' ? 'Strong Match' : 'Conceptual'}
         </span>
         <span className={isSelected ? 'text-white/30' : 'text-zinc-300'}>·</span>
         <span className={['text-[12px] font-bold', isSelected ? 'text-white/50' : 'text-zinc-400'].join(' ')}>
@@ -96,13 +96,13 @@ export function SuggestionCard({ suggestion, isSelected, onSelect, index }: Sugg
 
       {/* ── Score breakdown ── */}
       <div className={['mt-4 border-t pt-3', isSelected ? 'border-white/10' : 'border-zinc-100'].join(' ')}>
-        {/* Formula */}
-        <p className={['mb-3 font-mono text-[10px] uppercase tracking-widest', isSelected ? 'text-white/30' : 'text-zinc-300'].join(' ')}>
-          {`Σ = ${BREAKDOWN_ROWS.map(r => `${r.weight}×${r.key}`).join(' + ')}`}
+        {/* Description */}
+        <p className={['mb-4 text-[10px] leading-snug', isSelected ? 'text-white/50' : 'text-zinc-600'].join(' ')}>
+          Score = weighted sum of 4 metrics. Each metric is normalized (0–1), multiplied by its weight, then summed.
         </p>
 
         {/* Component bars — 1-col, full names + descriptions */}
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 mb-4">
           {BREAKDOWN_ROWS.map(({ key, fullName, desc, weight, field }) => {
             const raw = breakdown[field]
             const contribution = raw * weight
@@ -113,7 +113,7 @@ export function SuggestionCard({ suggestion, isSelected, onSelect, index }: Sugg
                     <span className={['font-mono text-[11px] font-black uppercase tracking-widest leading-none', isSelected ? 'text-white/70' : 'text-zinc-700'].join(' ')}>
                       {fullName}
                     </span>
-                    <span className={['mt-0.5 text-[10px] leading-tight', isSelected ? 'text-white/35' : 'text-zinc-400'].join(' ')}>
+                    <span className={['mt-0.5 text-[10px] leading-tight font-medium', isSelected ? 'text-white/40' : 'text-zinc-700'].join(' ')}>
                       {desc}
                     </span>
                   </div>
@@ -135,16 +135,20 @@ export function SuggestionCard({ suggestion, isSelected, onSelect, index }: Sugg
           })}
         </div>
 
-        {/* Sum line */}
-        <div className="mt-3 flex items-center gap-2">
-          <div className={['h-px flex-1', isSelected ? 'bg-white/10' : 'bg-zinc-100'].join(' ')} />
-          <span className={['font-mono text-[10px] font-bold', isSelected ? 'text-white/40' : 'text-zinc-400'].join(' ')}>TOTALE</span>
-          <span
-            className="font-mono text-[13px] font-black tabular-nums px-2 py-0.5 text-zinc-950"
-            style={{ background: 'var(--neon)' }}
-          >
-            {score.toFixed(2)}
-          </span>
+        {/* Formula */}
+        <div className="border-t pt-3" style={{ borderColor: isSelected ? 'rgba(255,255,255,0.1)' : '#f3f4f6' }}>
+          <p className={['mb-2 font-mono text-[9px] font-black uppercase tracking-widest', isSelected ? 'text-white/40' : 'text-zinc-600'].join(' ')}>
+            {`Formula: Σ = ${BREAKDOWN_ROWS.map(r => `${r.weight}×${r.key}`).join(' + ')}`}
+          </p>
+          <div className="flex items-center justify-between">
+            <span className={['text-[10px] font-bold', isSelected ? 'text-white/50' : 'text-zinc-500'].join(' ')}>Match Score</span>
+            <span
+              className="font-mono text-[14px] font-black tabular-nums px-2.5 py-1 text-zinc-950"
+              style={{ background: 'var(--neon)' }}
+            >
+              {score.toFixed(2)}
+            </span>
+          </div>
         </div>
       </div>
     </button>

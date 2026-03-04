@@ -137,7 +137,7 @@ export const getStats = query({
     const todayStart = Math.floor(nowMs / (24 * 3600 * 1000)) * (24 * 3600 * 1000)
     const weekStart = todayStart - 7 * 24 * 3600 * 1000
 
-    const [totalDocs, weekDocs, todayDocs] = await Promise.all([
+    const [totalDocs, todayDocs, mergedDocs] = await Promise.all([
       ctx.db
         .query('beats')
         .withIndex('by_created', (q) => q.eq('isArchived', false))
@@ -145,21 +145,19 @@ export const getStats = query({
       ctx.db
         .query('beats')
         .withIndex('by_created', (q) =>
-          q.eq('isArchived', false).gte('createdAt', weekStart)
+          q.eq('isArchived', false).gte('createdAt', todayStart)
         )
         .collect(),
       ctx.db
         .query('beats')
-        .withIndex('by_created', (q) =>
-          q.eq('isArchived', false).gte('createdAt', todayStart)
-        )
+        .withIndex('by_created', (q) => q.eq('isArchived', true))
         .collect(),
     ])
 
     return {
       total: totalDocs.length,
-      week: weekDocs.length,
       today: todayDocs.length,
+      merged: mergedDocs.length,
     }
   },
 })

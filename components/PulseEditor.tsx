@@ -16,9 +16,9 @@ import { warmupEmbeddingModel } from '@/lib/embeddings'
 import { relativeTime } from '@/lib/utils/time'
 
 const STARTER_PROMPTS = [
-  { emoji: '📌', label: 'Un obiettivo del mese', text: 'Il mio obiettivo principale questo mese è ' },
-  { emoji: '💡', label: "Un'idea che mi gira in testa", text: "Ho un'idea che mi gira in testa: " },
-  { emoji: '🎯', label: 'Un problema da risolvere', text: 'Sto cercando di capire come risolvere ' },
+  { emoji: '📌', label: 'A monthly goal', text: 'My main goal this month is ' },
+  { emoji: '💡', label: "An idea on my mind", text: "I have an idea on my mind: " },
+  { emoji: '🎯', label: 'A problem to solve', text: 'I\'m trying to figure out how to solve ' },
 ]
 
 export function PulseEditor() {
@@ -171,7 +171,7 @@ export function PulseEditor() {
       {pendingUndo && (
         <div className="toast-enter relative z-20 flex shrink-0 items-center justify-between border-b border-zinc-200 bg-zinc-950 px-5 py-2.5">
           <span className="text-[13px] font-bold uppercase tracking-wider text-white">
-            Pulse salvato · {pendingUndo.count} {pendingUndo.count === 1 ? 'nota accorpata' : 'note accorpate'}
+            Pulse saved · {pendingUndo.count} {pendingUndo.count === 1 ? 'note merged' : 'notes merged'}
           </span>
           <div className="flex items-center gap-3">
             <button
@@ -179,7 +179,7 @@ export function PulseEditor() {
               className="text-[13px] font-black uppercase tracking-widest transition-colors"
               style={{ color: 'var(--neon)' }}
             >
-              Annulla
+              Undo
             </button>
             <button
               onClick={() => setPendingUndo(null)}
@@ -212,7 +212,7 @@ export function PulseEditor() {
                 isIdle ? 'opacity-100' : 'opacity-0',
               ].join(' ')}
             >
-              Scrivi · Connetti · Ricorda
+              Write · Connect · Remember
             </p>
           </div>
         )}
@@ -268,10 +268,10 @@ function OnboardingPrompts({ onSelect }: { onSelect: (text: string) => void }) {
     <div className="flex flex-1 flex-col items-center justify-center gap-6 px-6">
       <div className="text-center">
         <div className="mb-2 text-[13px] font-black uppercase tracking-[0.25em] text-zinc-300">
-          Prima nota
+          First note
         </div>
         <p className="text-[16px] font-bold text-zinc-500">
-          Inizia con un pensiero, un obiettivo o un&apos;idea.
+          Start with a thought, a goal, or an idea.
         </p>
       </div>
       <div className="flex w-full max-w-sm flex-col gap-2">

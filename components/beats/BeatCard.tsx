@@ -52,7 +52,7 @@ export function BeatCard({ beat, onArchive, highlight }: BeatCardProps) {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={beat.attachmentUrl}
-            alt="allegato"
+            alt="attachment"
             className="max-h-48 rounded-md object-cover"
           />
         </a>
@@ -90,9 +90,9 @@ export function BeatCard({ beat, onArchive, highlight }: BeatCardProps) {
         <button
           onClick={handleArchive}
           className="hidden group-hover:inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs text-zinc-500 hover:bg-zinc-800 hover:text-zinc-300 transition-colors"
-          title="Archivia"
+          title="Archive"
         >
-          archivia
+          Archive
         </button>
       </footer>
     </article>

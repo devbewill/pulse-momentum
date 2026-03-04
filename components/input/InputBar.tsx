@@ -95,14 +95,7 @@ export function InputBar({
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        className={[
-          'border transition-all duration-100',
-          isDragging
-            ? 'border-zinc-950 bg-zinc-50'
-            : isFocused || mergedBlocks.length > 0
-              ? 'border-zinc-950'
-              : 'border-zinc-200 hover:border-zinc-400',
-        ].join(' ')}
+        className="border-[5px] border-zinc-950 transition-all duration-100 bg-white"
       >
         {/* Scrollable content area */}
         <div className="max-h-[50dvh] overflow-y-auto px-4 pt-4">
@@ -113,7 +106,7 @@ export function InputBar({
             onKeyDown={handleKeyDown}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
-            placeholder={isDragging ? 'Rilascia qui…' : 'Cosa stai pensando?'}
+            placeholder={isDragging ? 'Drop here…' : 'What are you thinking?'}
             rows={4}
             className="w-full resize-none bg-transparent text-[18px] font-bold leading-[1.75] text-zinc-950 placeholder-zinc-300 outline-none"
             style={{ minHeight: '120px' }}
@@ -139,7 +132,7 @@ export function InputBar({
               type="button"
               onClick={() => fileInputRef.current?.click()}
               className="flex h-8 w-8 items-center justify-center text-zinc-400 transition-colors hover:text-zinc-950"
-              title="Allega file"
+              title="Attach file"
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48" />
@@ -152,7 +145,7 @@ export function InputBar({
               type="button"
               onClick={toggleVoice}
               disabled={!voiceSupported}
-              title={voiceState === 'recording' ? 'Ferma dettatura' : 'Inizia dettatura'}
+              title={voiceState === 'recording' ? 'Stop recording' : 'Start recording'}
               className={[
                 'flex h-8 w-8 items-center justify-center transition-colors',
                 voiceState === 'recording'
@@ -182,7 +175,7 @@ export function InputBar({
                   ? 'text-zinc-950'
                   : 'text-zinc-400 hover:text-zinc-950',
               ].join(' ')}
-              title="Impostazioni matching weights"
+              title="Matching weights settings"
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="1" />

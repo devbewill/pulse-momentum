@@ -14,15 +14,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex h-dvh bg-white">
       {/* ─── Desktop sidebar ────────────────────────────────────── */}
-      <aside className="hidden md:flex md:w-52 md:shrink-0 md:flex-col border-r border-zinc-200">
+      <aside className="hidden md:flex md:w-52 md:shrink-0 md:flex-col border-r-[5px] border-zinc-950">
         {/* Logo */}
         <div className="px-5 pt-8 pb-6">
-          <div className="flex items-center gap-2">
-            <span className="star-glow text-[18px] leading-none text-[#B5FF4D]" style={{ color: 'var(--neon)' }}>✦</span>
-            <span className="text-[18px] font-black uppercase tracking-tight text-zinc-950">Pulse</span>
+          <div className="flex items-center gap-1.5">
+            <span className="star-glow text-[24px] leading-none font-black" style={{ color: 'var(--neon)' }}>✦</span>
+            <span className="text-[20px] font-black uppercase tracking-widest text-zinc-950" style={{ letterSpacing: '-0.02em' }}>PULSE</span>
           </div>
-          <p className="mt-1 pl-[26px] text-[10px] text-zinc-400 italic">
-            le tue idee, connesse
+          <p className="mt-2 pl-1 text-[11px] font-black uppercase tracking-wider text-zinc-950">
+            Your ideas, connected
           </p>
         </div>
 
@@ -38,7 +38,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             ].join(' ')}
           >
             <span className="text-[13px]" style={isCapture ? {} : { color: 'inherit' }}>✦</span>
-            Cattura
+            Capture
           </Link>
           <Link
             href="/pulses"
@@ -50,7 +50,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             ].join(' ')}
           >
             <ListIcon size={13} />
-            Archivio
+            Archive
           </Link>
         </nav>
 
@@ -60,17 +60,21 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         {/* Stats */}
         <div className="px-5">
           <p className="mb-4 text-[11px] font-black uppercase tracking-[0.25em] text-zinc-400">
-            Attività
+            Stats
           </p>
-          <div className="grid grid-cols-2 gap-3 mb-3">
-            <StatBlock label="Oggi" value={stats?.today} />
-            <StatBlock label="Settimana" value={stats?.week} />
-          </div>
-          <div className="border-t border-zinc-100 pt-3 flex items-baseline justify-between">
-            <span className="text-[11px] font-black uppercase tracking-widest text-zinc-400">Totale</span>
-            <span className="font-mono font-black text-[28px] leading-none text-zinc-950 tabular-nums">
-              {stats?.total ?? '—'}
-            </span>
+          <div className="space-y-3">
+            <div className="border-[3px] border-zinc-950 p-3">
+              <div className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mb-1">Total</div>
+              <div className="font-mono font-black text-[32px] leading-none text-zinc-950 tabular-nums">
+                {stats?.total ?? '—'}
+              </div>
+            </div>
+            <div className="border-[3px] border-zinc-950 p-3">
+              <div className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mb-1">Merged</div>
+              <div className="font-mono font-black text-[32px] leading-none text-zinc-950 tabular-nums">
+                {stats?.merged ?? '—'}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -87,9 +91,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div className="flex flex-1 flex-col min-w-0 min-h-0">
         {/* Mobile topbar */}
         <header className="md:hidden flex shrink-0 items-center justify-between border-b border-zinc-200 bg-white px-5 py-3.5">
-          <div className="flex items-center gap-2">
-            <span className="text-[14px] leading-none" style={{ color: 'var(--neon)' }}>✦</span>
-            <span className="text-[15px] font-black uppercase tracking-tight text-zinc-950">Pulse</span>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[18px] leading-none font-black" style={{ color: 'var(--neon)' }}>✦</span>
+            <span className="text-[16px] font-black uppercase tracking-widest text-zinc-950">PULSE</span>
           </div>
           {stats !== undefined && stats.total > 0 && (
             <span className="font-mono font-black text-[11px] tabular-nums text-zinc-400">
@@ -116,7 +120,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             ].join(' ')}
           >
             <span className="text-[15px] leading-none" style={isCapture ? { color: 'var(--neon)' } : {}}>✦</span>
-            Cattura
+            Capture
           </Link>
           <div className="w-px bg-zinc-100 self-stretch my-2" />
           <Link
@@ -127,7 +131,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             ].join(' ')}
           >
             <ListIcon size={15} />
-            Archivio
+            Archive
           </Link>
         </nav>
       </div>
@@ -137,11 +141,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
 function StatBlock({ label, value }: { label: string; value: number | undefined }) {
   return (
-    <div>
-      <div className="font-mono font-black text-[28px] leading-none text-zinc-950 tabular-nums">
-        {value ?? <span className="inline-block h-5 w-6 animate-pulse rounded-sm bg-zinc-100 align-middle" />}
+    <div className="border-[3px] border-zinc-950 p-3 transition-all hover:bg-zinc-950 hover:text-white group">
+      <div className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 group-hover:text-zinc-300 mb-1">{label}</div>
+      <div className="font-mono font-black text-[26px] leading-none text-zinc-950 tabular-nums group-hover:text-white">
+        {value ?? <span className="inline-block h-5 w-5 animate-pulse rounded-sm bg-zinc-200 align-middle" />}
       </div>
-      <div className="mt-1 text-[11px] font-black uppercase tracking-widest text-zinc-400">{label}</div>
     </div>
   )
 }

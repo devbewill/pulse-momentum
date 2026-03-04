@@ -13,14 +13,15 @@ export interface MatchingWeights {
 // Absolute floor on raw cosine similarity — pre-ranking filter.
 // Calibrated for distiluse-base-multilingual-cased-v2 on Italian short texts.
 // Observed: same-topic work notes ~0.18–0.24, cross-domain (health/tech) ~0.01–0.11.
-export const MIN_SIMILARITY_THRESHOLD = 0.15
+// Lowered from 0.15 to 0.10 to capture more conceptually-related notes on short texts.
+export const MIN_SIMILARITY_THRESHOLD = 0.10
 
 // Minimum composite score (after ranking weights) to show a suggestion.
 export const MIN_COMPOSITE_SCORE = 0.30
 
 // Thresholds that determine badge label
-export const STRONG_MATCH_THRESHOLD = 0.25   // "match forte" — same topic, high confidence
-export const CONCEPTUAL_MATCH_THRESHOLD = 0.15 // "match concettuale"
+export const STRONG_MATCH_THRESHOLD = 0.25   // "strong match" — same topic, high confidence
+export const CONCEPTUAL_MATCH_THRESHOLD = 0.15 // "conceptual match"
 
 // How many suggestions to surface (3–6 per spec)
 export const MIN_SUGGESTIONS = 3

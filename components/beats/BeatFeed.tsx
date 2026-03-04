@@ -53,7 +53,7 @@ export function BeatFeed({
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-3 text-zinc-500 select-none">
         <span className="text-4xl">✦</span>
-        <p className="text-sm">Inizia a scrivere il tuo primo battito.</p>
+        <p className="text-sm">Start writing your first pulse.</p>
       </div>
     )
   }
@@ -68,7 +68,7 @@ export function BeatFeed({
           onClick={onLoadMore}
           className="mx-auto mb-4 rounded-full bg-zinc-800 px-4 py-1.5 text-xs text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200 transition-colors"
         >
-          Carica precedenti
+          Load earlier
         </button>
       )}
 

@@ -50,7 +50,7 @@ export function ContextSuggestions({
       {/* Section header */}
       <div className="mb-3 flex shrink-0 items-center gap-2">
         <span className="text-[12px] font-black uppercase tracking-[0.2em] text-zinc-400">
-          Contesto rilevato
+          Detected context
         </span>
         {isSearching && (
           <div className="h-3 w-3 animate-spin border-2 border-zinc-200 border-t-zinc-950" />
@@ -84,20 +84,20 @@ export function ContextSuggestions({
             onClick={handleToggleAll}
             className="text-[13px] font-bold uppercase tracking-wider text-zinc-400 transition-colors hover:text-zinc-950"
           >
-            {allSelected ? 'Deseleziona tutti' : 'Seleziona tutti'}
+            {allSelected ? 'Deselect all' : 'Select all'}
           </button>
           <div className="flex-1" />
           <button
             onClick={handleMerge}
             className="border border-zinc-950 bg-zinc-950 px-3 py-2 text-[13px] font-black uppercase tracking-wider text-white transition-all hover:bg-white hover:text-zinc-950"
           >
-            Accorpa {selectedIds.size > 1 ? `(${selectedIds.size})` : ''}
+            Merge {selectedIds.size > 1 ? `(${selectedIds.size})` : ''}
           </button>
           <button
             onClick={handleArchive}
             className="border border-zinc-200 px-3 py-2 text-[13px] font-bold uppercase tracking-wider text-zinc-500 transition-all hover:border-zinc-950 hover:text-zinc-950"
           >
-            Archivia
+            Archive
           </button>
         </div>
       )}

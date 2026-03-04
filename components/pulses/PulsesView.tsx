@@ -7,6 +7,7 @@ import { api } from '@/convex/_generated/api'
 import { relativeTime } from '@/lib/utils/time'
 import { parseBlocks, countMergedBlocks } from '@/lib/utils/content'
 import { useUpdateTags } from '@/hooks/useBeats'
+import { generateEmbedding } from '@/lib/embeddings'
 import type { Beat } from '@/types'
 
 const PAGE_SIZE = 30
@@ -18,10 +19,10 @@ const STOP = new Set(['il','la','lo','le','i','gli','un','una','uno','e','è','c
 
 function extractKeyword(content: string): string {
   const words = content.toLowerCase().replace(/[^a-z\u00e0-\u00fc\s]/g, '').split(/\s+/).filter((w) => w.length > 3 && !STOP.has(w))
-  if (words.length === 0) return 'altro'
+  if (words.length === 0) return 'other'
   const freq = new Map<string, number>()
   words.forEach((w) => freq.set(w, (freq.get(w) || 0) + 1))
-  return [...freq.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? 'altro'
+  return [...freq.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? 'other'
 }
 
 // ─── Export ───────────────────────────────────────────────────────────────────
@@ -29,9 +30,9 @@ function extractKeyword(content: string): string {
 function exportMarkdown(beats: Beat[]) {
   const md = beats
     .map((b) => {
-      const date = new Date(b.createdAt).toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' })
-      const type = b.inputType === 'voice' ? '🎙 Voce' : b.inputType === 'attachment' ? '📎 Allegato' : '✦ Testo'
-      const tags = b.tags?.length ? `\n\nTag: ${b.tags.join(', ')}` : ''
+      const date = new Date(b.createdAt).toLocaleDateString('en-US', { day: '2-digit', month: 'long', year: 'numeric' })
+      const type = b.inputType === 'voice' ? '🎙 Voice' : b.inputType === 'attachment' ? '📎 Attachment' : '✦ Text'
+      const tags = b.tags?.length ? `\n\nTags: ${b.tags.join(', ')}` : ''
       return `## ${date} · ${type}\n\n${b.content}${tags}`
     })
     .join('\n\n---\n\n')
@@ -106,7 +107,7 @@ export function PulsesView() {
       <header className="flex shrink-0 flex-col border-b border-zinc-200">
         <div className="flex items-center justify-between px-5 py-4">
           <h1 className="text-[14px] font-black uppercase tracking-[0.2em] text-zinc-950">
-            Tutti i pulse
+            All pulses
             {filteredBeats.length > 0 && (
               <span className="ml-2 font-mono text-zinc-400">{filteredBeats.length}</span>
             )}
@@ -118,20 +119,20 @@ export function PulsesView() {
                 onClick={() => setViewMode('list')}
                 className={['px-3 py-1.5 text-[12px] font-black uppercase tracking-wider transition-colors duration-100', viewMode === 'list' ? 'bg-zinc-950 text-white' : 'text-zinc-400 hover:text-zinc-950'].join(' ')}
               >
-                Lista
+                List
               </button>
               <button
                 onClick={() => setViewMode('topics')}
                 className={['border-l border-zinc-200 px-3 py-1.5 text-[12px] font-black uppercase tracking-wider transition-colors duration-100', viewMode === 'topics' ? 'bg-zinc-950 text-white' : 'text-zinc-400 hover:text-zinc-950'].join(' ')}
               >
-                Temi
+                Topics
               </button>
             </div>
             {/* Export */}
             {beats.length > 0 && (
               <button
                 onClick={() => exportMarkdown(beats as Beat[])}
-                title="Esporta come Markdown"
+                title="Export as Markdown"
                 className="border border-zinc-200 p-1.5 text-zinc-400 transition-colors hover:border-zinc-950 hover:text-zinc-950"
               >
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -154,7 +155,7 @@ export function PulsesView() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cerca nei pulse..."
+              placeholder="Search pulses..."
               className="flex-1 bg-transparent text-[15px] font-bold text-zinc-950 placeholder-zinc-300 outline-none"
             />
             {searchQuery && (
@@ -175,7 +176,7 @@ export function PulsesView() {
         ) : filteredBeats.length === 0 ? (
           searchQuery ? (
             <div className="flex h-full flex-col items-center justify-center gap-2 select-none">
-              <p className="text-[15px] font-bold uppercase tracking-wider text-zinc-300">Nessun risultato</p>
+              <p className="text-[15px] font-bold uppercase tracking-wider text-zinc-300">No results</p>
               <p className="text-[13px] font-bold text-zinc-400">per &ldquo;{searchQuery}&rdquo;</p>
             </div>
           ) : (
@@ -189,7 +190,7 @@ export function PulsesView() {
             onTagsUpdate={handleTagsUpdate}
           />
         ) : (
-          <div className="flex flex-col divide-y divide-zinc-100">
+          <div className="flex flex-col divide-y-[5px] divide-zinc-950">
             {filteredBeats.map((beat, i) => (
               <PulseCard
                 key={beat._id}
@@ -205,7 +206,7 @@ export function PulsesView() {
                 onClick={() => loadMore(PAGE_SIZE)}
                 className="py-4 text-[13px] font-black uppercase tracking-widest text-zinc-300 transition-colors hover:text-zinc-950"
               >
-                Carica precedenti
+                Load earlier
               </button>
             )}
           </div>
@@ -246,9 +247,10 @@ function TopicsView({
           {/* Group header */}
           <button
             onClick={() => toggle(keyword)}
-            className="flex w-full items-center justify-between px-5 py-3 hover:bg-zinc-50"
+            className="flex w-full items-center justify-between px-5 py-4 hover:bg-zinc-50 border-t-[5px] border-zinc-950"
           >
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
+              <div className="h-3 w-3 shrink-0" style={{ background: 'var(--neon)' }} />
               <span className="text-[13px] font-black uppercase tracking-[0.2em] text-zinc-950">
                 {keyword}
               </span>
@@ -260,7 +262,7 @@ function TopicsView({
           </button>
           {/* Group cards */}
           {!collapsed.has(keyword) && (
-            <div className="divide-y divide-zinc-50 bg-zinc-50/50">
+            <div className="divide-y-[5px] divide-zinc-950 bg-zinc-50/50">
               {groupBeats.map((beat, i) => (
                 <PulseCard
                   key={beat._id}
@@ -299,6 +301,10 @@ function PulseCard({
 }) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editedContent, setEditedContent] = useState(beat.content)
+  const [isSaving, setIsSaving] = useState(false)
+  const updateBeat = useMutation(api.beats.updateBeat)
   const blocks = parseBlocks(beat.content)
   const mainBlock = blocks[0]
   const mergedCount = countMergedBlocks(beat.content)
@@ -309,6 +315,26 @@ function PulseCard({
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
+
+  const handleSaveEdit = useCallback(async () => {
+    if (!editedContent.trim() || editedContent === beat.content) {
+      setIsEditing(false)
+      return
+    }
+
+    setIsSaving(true)
+    try {
+      const embedding = await generateEmbedding(editedContent)
+      await updateBeat({
+        id: beat._id,
+        content: editedContent,
+        embedding,
+      })
+      setIsEditing(false)
+    } finally {
+      setIsSaving(false)
+    }
+  }, [editedContent, beat.content, beat._id, updateBeat])
 
   return (
     <div
@@ -324,7 +350,7 @@ function PulseCard({
         onClick={() => setIsExpanded((v) => !v)}
         className={[
           'flex w-full flex-col gap-2 px-5 text-left transition-colors duration-100',
-          compact ? 'py-3 pl-8' : 'py-4',
+          compact ? 'py-4 pl-8' : 'py-6',
           isExpanded ? 'bg-zinc-50' : 'hover:bg-zinc-50',
         ].join(' ')}
       >
@@ -357,9 +383,9 @@ function PulseCard({
 
         {/* Tags preview */}
         {beat.tags && beat.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-1.5">
             {beat.tags.map((tag) => (
-              <span key={tag} className="border border-zinc-200 px-2 py-0.5 text-[12px] font-bold uppercase tracking-wider text-zinc-400">
+              <span key={tag} className="px-2.5 py-1 text-[11px] font-black uppercase tracking-wider text-white" style={{ background: 'var(--neon)' }}>
                 {tag}
               </span>
             ))}
@@ -372,39 +398,81 @@ function PulseCard({
         <div>
           <div className={['border-t border-zinc-100 bg-zinc-50', compact ? 'pl-8 pr-5 pb-4' : 'px-5 pb-5'].join(' ')}>
 
+            {/* Edit mode */}
+            {isEditing && (
+              <div className="mb-4 space-y-3">
+                <textarea
+                  value={editedContent}
+                  onChange={(e) => setEditedContent(e.target.value)}
+                  className="w-full border border-zinc-200 bg-white p-3 text-[16px] font-bold leading-relaxed text-zinc-950 outline-none resize-none"
+                  rows={6}
+                />
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleSaveEdit}
+                    disabled={isSaving}
+                    className="border border-zinc-950 bg-zinc-950 px-3 py-2 text-[13px] font-bold uppercase tracking-wider text-white transition-all hover:bg-white hover:text-zinc-950 disabled:opacity-50"
+                  >
+                    {isSaving ? 'Saving…' : 'Save'}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsEditing(false)
+                      setEditedContent(beat.content)
+                    }}
+                    disabled={isSaving}
+                    className="border border-zinc-200 px-3 py-2 text-[13px] font-bold uppercase tracking-wider text-zinc-500 transition-all hover:border-zinc-950 hover:text-zinc-950 disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Merged blocks (no repetition of main text) */}
-            <MergedBlocksContent blocks={blocks} />
+            {!isEditing && <MergedBlocksContent blocks={blocks} />}
 
             {/* Tag editor */}
-            <TagEditor
-              beatId={beat._id}
-              tags={beat.tags ?? []}
-              onUpdate={(tags) => onTagsUpdate(beat._id, tags)}
-            />
+            {!isEditing && (
+              <TagEditor
+                beatId={beat._id}
+                tags={beat.tags ?? []}
+                onUpdate={(tags) => onTagsUpdate(beat._id, tags)}
+              />
+            )}
 
             {/* Footer actions — minimal */}
-            <div className="mt-4 border-t border-zinc-200 pt-4 flex items-center justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-400">
-                type: {beat.inputType === 'voice' ? 'voce' : beat.inputType === 'attachment' ? 'allegato' : 'testo'}
-              </span>
-              <div className="flex items-center gap-2">
-                {/* Copy button */}
-                <button
-                  onClick={handleCopy}
-                  className="border border-zinc-200 px-3 py-2 text-[13px] font-bold uppercase tracking-wider text-zinc-500 transition-all hover:border-zinc-950 hover:text-zinc-950"
-                >
-                  {copied ? 'Copiato!' : 'Copia'}
-                </button>
-                {/* Archive button */}
-                <button
-                  onClick={() => onArchive(beat._id)}
-                  disabled={isArchiving}
-                  className="border border-zinc-200 px-3 py-2 text-[13px] font-bold uppercase tracking-wider text-zinc-500 transition-all hover:border-red-400 hover:bg-red-50 hover:text-red-600 disabled:opacity-30"
-                >
-                  {isArchiving ? 'Archiviando…' : 'Archivia'}
-                </button>
+            {!isEditing && (
+              <div className="mt-4 border-t border-zinc-200 pt-4 flex items-center justify-between">
+                <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-400">
+                  type: {beat.inputType === 'voice' ? 'voice' : beat.inputType === 'attachment' ? 'attachment' : 'text'}
+                </span>
+                <div className="flex items-center gap-2">
+                  {/* Edit button */}
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className="border border-zinc-200 px-3 py-2 text-[13px] font-bold uppercase tracking-wider text-zinc-500 transition-all hover:border-zinc-950 hover:text-zinc-950"
+                  >
+                    Edit
+                  </button>
+                  {/* Copy button */}
+                  <button
+                    onClick={handleCopy}
+                    className="border border-zinc-200 px-3 py-2 text-[13px] font-bold uppercase tracking-wider text-zinc-500 transition-all hover:border-zinc-950 hover:text-zinc-950"
+                  >
+                    {copied ? 'Copied!' : 'Copy'}
+                  </button>
+                  {/* Archive button */}
+                  <button
+                    onClick={() => onArchive(beat._id)}
+                    disabled={isArchiving}
+                    className="border border-zinc-200 px-3 py-2 text-[13px] font-bold uppercase tracking-wider text-zinc-500 transition-all hover:border-red-400 hover:bg-red-50 hover:text-red-600 disabled:opacity-30"
+                  >
+                    {isArchiving ? 'Archiving…' : 'Archive'}
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
@@ -464,9 +532,9 @@ function TagEditor({
     <div className="mt-4">
       <div className="flex flex-wrap gap-1.5 items-center">
         {tags.map((tag) => (
-          <span key={tag} className="flex items-center gap-1 border border-zinc-200 px-2 py-0.5">
-            <span className="text-[12px] font-bold uppercase tracking-wider text-zinc-600">{tag}</span>
-            <button onClick={() => removeTag(tag)} className="text-zinc-300 hover:text-zinc-950 transition-colors">
+          <span key={tag} className="flex items-center gap-1.5 px-2.5 py-1 text-white font-black uppercase tracking-wider text-[11px]" style={{ background: 'var(--neon)' }}>
+            <span>{tag}</span>
+            <button onClick={() => removeTag(tag)} className="text-white/60 hover:text-white transition-colors">
               <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
                 <path d="M18 6 6 18M6 6l12 12" />
               </svg>
@@ -533,14 +601,14 @@ function EmptyState() {
     <div className="flex h-full flex-col items-center justify-center gap-5 select-none">
       <span className="star-pulse text-4xl" style={{ color: 'var(--neon)' }}>✦</span>
       <div className="space-y-1.5 text-center">
-        <p className="text-[15px] font-black uppercase tracking-widest text-zinc-300">Nessun pulse</p>
-        <p className="text-[13px] font-bold text-zinc-400">Torna alla cattura e scrivi il primo pensiero.</p>
+        <p className="text-[15px] font-black uppercase tracking-widest text-zinc-300">No pulses</p>
+        <p className="text-[13px] font-bold text-zinc-400">Go back to capture and write your first thought.</p>
       </div>
       <Link
         href="/"
         className="mt-1 border border-zinc-200 px-5 py-2.5 text-[13px] font-black uppercase tracking-wider text-zinc-500 transition-all hover:border-zinc-950 hover:bg-zinc-950 hover:text-white"
       >
-        ← Cattura
+        ← Capture
       </Link>
     </div>
   )
