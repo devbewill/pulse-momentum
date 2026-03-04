@@ -46,3 +46,8 @@ convex/_generated/
 # Env files
 .env.local
 .env.production
+
+# Documentation
+/docs/
+*.md
+!README.md
