@@ -22,8 +22,8 @@
 
 ### Offline & PWA
 - **Service Worker:** Custom (`public/sw.js`)
-- **Local Storage:** IndexedDB per draft persistence
-- **Manifest:** `manifest.json` per installazione
+- **Local Storage:** IndexedDB for draft persistence
+- **Manifest:** `manifest.json` for installation
 
 ### Deployment
 - **Hosting:** Vercel (Next.js native)

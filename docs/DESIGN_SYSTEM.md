@@ -72,7 +72,7 @@
 - 700 = Bold (body content)
 - 900 = Black (headers, labels, emphasis)
 
-**No:** 300, 400, 800 weights (keep palette tight)
+**Not used:** 300, 400, 800 weights (keep palette tight)
 
 ### Text Styling Rules
 - **All UI chrome:** UPPERCASE + letter-spacing (0.2em to 0.25em)

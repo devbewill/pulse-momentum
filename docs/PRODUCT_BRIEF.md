@@ -2,135 +2,135 @@
 
 ## Overview
 
-Pulse è un'applicazione web progressiva (PWA) che consente agli utenti di catturare, organizzare e riscoprire i propri pensieri, idee e note attraverso un sistema intelligente di suggerimenti semantici. L'app funziona sia online che offline, con sincronizzazione automatica quando la connessione torna disponibile.
+Pulse is a progressive web application (PWA) that enables users to capture, organize, and rediscover their thoughts, ideas, and notes through an intelligent semantic suggestion system. The app works both online and offline, with automatic synchronization when connectivity returns.
 
-**Tagline:** "Le tue idee, connesse"
+**Tagline:** "Your ideas, connected"
 
 ---
 
 ## Core Value Proposition
 
-1. **Cattura istantanea** - Scrivi rapidamente pensieri, idee o appunti senza attesa
-2. **Riscoperta intelligente** - Il sistema suggerisce automaticamente note precedenti correlate mentre scrivi
-3. **Organizzazione flessibile** - Gestisci note tramite tag, archivio, o raggruppamento per tema
-4. **Senza distrazioni** - Interfaccia minimale e brutale focalizzata sulla scrittura
-5. **Offline-first** - Funziona completamente offline con sincronizzazione automatica
+1. **Instant capture** - Write thoughts, ideas, or notes quickly without friction
+2. **Intelligent rediscovery** - The system automatically suggests previously-related notes as you write
+3. **Flexible organization** - Manage notes through tags, archive, or theme-based grouping
+4. **Distraction-free** - Minimal, brutalist interface focused entirely on writing
+5. **Offline-first** - Works completely offline with automatic synchronization
 
 ---
 
-## Feature Principali
+## Feature Breakdown
 
-### 1. **Cattura di Note (Capture)**
-L'utente può creare nuove note in tre modalità:
-- **Testo manuale** - Digita direttamente nella textarea
-- **Voce** - Usa il microfono del dispositivo per dettare (Web Speech API)
-- **Allegati** - Carica immagini, PDF, file di testo, link (drag-and-drop o click)
+### 1. **Note Capture (Capture)**
+Users can create new notes in three modalities:
+- **Manual text** - Type directly into the textarea
+- **Voice** - Use the device microphone to dictate (Web Speech API)
+- **Attachments** - Upload images, PDFs, text files, links (drag-and-drop or click)
 
-**Comportamento:**
-- La textarea cresce dinamicamente con il contenuto (max 260px)
-- Auto-salvataggio come draft offline se offline
-- Dopo il salvataggio, la nota appare immediatamente nell'archivio
+**Behavior:**
+- Textarea grows dynamically with content (max 260px)
+- Auto-saves as offline draft if offline
+- After save, note appears immediately in archive
 
-**Input minimo:** 1 carattere (ma il sistema suggerisce solo da 30+ caratteri)
-
----
-
-### 2. **Suggerimenti Contestuali in Tempo Reale**
-Mentre l'utente digita, il sistema analizza il contenuto e suggerisce note precedenti correlate.
-
-**Come funziona:**
-1. Dopo 400ms dall'ultima digitazione e con almeno 30 caratteri
-2. Genera un embedding vettoriale del testo (rappresentazione semantica)
-3. Cerca nel database note con embedding simile
-4. Applica 4 metriche di ranking:
-   - **Similarità semantica** (70%) - quanto il contenuto è simile a livello di significato
-   - **Recency** (10%) - le note recenti hanno più peso
-   - **Interaction** (10%) - le note visualizzate/consultate spesso hanno più peso
-   - **Keyword matching** (10%) - bonus se le parole della query appaiono nella nota
-
-**Score finale:** Somma ponderata dei 4 fattori (min 0.30 per mostrarsi)
-
-**UI dei suggerimenti:**
-- Card per ogni nota con: contenuto, score, breakdown dei 4 fattori
-- Score complessivo in badge neon
-- Badge "Strong Match" vs "Conceptual" basato su similarità + keyword matching
-- Selezione multipla disponibile
+**Minimum input:** 1 character (but system suggests only from 30+ characters)
 
 ---
 
-### 3. **Merge di Note (Accorpamento)**
-L'utente può unire note precedenti con quella nuova che sta scrivendo.
+### 2. **Contextual Suggestions in Real-Time**
+As the user types, the system analyzes content and suggests previously-related notes.
 
-**Processo:**
-1. Dall'input bar, clicca su una nota suggerita → "Select"
-2. La nota appare come "merged block" nell'editor con divider e timestamp
-3. Può modificare il testo dei merged blocks (inline editing)
-4. Al salvataggio:
-   - Crea una nuova nota che contiene il testo nuovo + tutti i merged blocks
-   - Archiva le note originali (soft-archive, non eliminate)
-5. Appare un toast "Pulse saved · X notes merged" con bottone "Undo" (8 sec)
+**How it works:**
+1. After 400ms of inactivity and with at least 30 characters
+2. Generates a vector embedding of the text (semantic representation)
+3. Searches database for notes with similar embeddings
+4. Applies 4 ranking metrics:
+   - **Semantic similarity** (70%) - how similar the content is at a conceptual level
+   - **Recency** (10%) - recent notes have higher weight
+   - **Interaction** (10%) - frequently viewed/consulted notes have more weight
+   - **Keyword matching** (10%) - bonus if query words appear in the note
 
-**Valore:** Consolidare idee correlate senza perdere il contesto temporale di ognuna
+**Final score:** Weighted sum of 4 factors (min 0.30 to display)
 
----
-
-### 4. **Archivio (Archive View)**
-Vista dedicata per tutte le note salvate, con due modalità di visualizzazione.
-
-#### **Vista Lista (List)**
-- Elenco ordinato cronologicamente (più recenti in alto)
-- Ogni nota mostra:
-  - Icona di tipo (voce 🎙, allegato 📎, testo ✦)
-  - Timestamp relativo (es. "2 min ago")
-  - Badge "+X" se è stata creata tramite merge (vedi merged blocks)
-  - Anteprima testo (2 righe max)
-  - Tag preview (se presenti)
-- Click per espandere e vedere dettagli completi
-
-#### **Vista Temi (Topics)**
-- Raggruppamento automatico per keyword principale
-- Ogni tema mostra:
-  - Keyword evidenziato
-  - Numero di note nel tema
-  - Quadratino neon accanto al nome (visual branding)
-  - Note raggruppate con sfondo grigio
-- Collapsible per compattare temi
-
-**Ricerca:** Input per filtrare per contenuto o tag (case-insensitive)
+**Suggestion UI:**
+- Card for each note with: content, score, 4-factor breakdown
+- Overall score in neon badge
+- "Strong Match" vs "Conceptual" badge based on similarity + keyword matching
+- Multiple selection available
 
 ---
 
-### 5. **Gestione Nota Espansa**
-Quando clicchi su una nota per espanderla, vedi:
+### 3. **Note Merging (Consolidation)**
+Users can combine previous notes with the new one they're writing.
 
-**Sezione principale:**
-- Contenuto completo con preservazione del formatting (whitespace)
-- Se contiene merged blocks: divider con timestamp di ognuno
-- Immagine allegata (se presente)
+**Process:**
+1. From input bar, click a suggested note → "Select"
+2. Note appears as "merged block" in editor with divider and timestamp
+3. Can edit merged block text inline
+4. On save:
+   - Creates new note containing new text + all merged blocks
+   - Archives original notes (soft-archive, not deleted)
+5. Toast appears "Pulse saved · X notes merged" with "Undo" button (8 sec)
+
+**Value:** Consolidate related ideas without losing temporal context of each
+
+---
+
+### 4. **Archive (Archive View)**
+Dedicated view for all saved notes, with two display modes.
+
+#### **List View**
+- Chronologically ordered (most recent first)
+- Each note shows:
+  - Type icon (voice 🎙, attachment 📎, text ✦)
+  - Relative timestamp (e.g., "2 min ago")
+  - "+X" badge if created via merge (merged blocks count)
+  - Text preview (2 lines max)
+  - Tag preview (if present)
+- Click to expand and see full details
+
+#### **Topics View**
+- Automatic grouping by keyword
+- Each topic shows:
+  - Highlighted keyword
+  - Count of notes in topic
+  - Neon square next to name (visual branding)
+  - Notes grouped with gray background
+- Collapsible to compact topics
+
+**Search:** Input to filter by content or tag (case-insensitive)
+
+---
+
+### 5. **Expanded Note Management**
+When you click a note to expand it, you see:
+
+**Main section:**
+- Full content with whitespace preserved
+- If contains merged blocks: divider with each timestamp
+- Attached image (if present)
 
 **Tag editor:**
-- Visualizza tag esistenti (sfondo neon)
-- Input per aggiungere nuovi tag (Enter per aggiungere)
-- Click su tag per rimuovere
-- Tag auto-lowercase e spazi convertiti in dash
+- Display existing tags (neon background)
+- Input to add new tags (Enter to add)
+- Click tag to remove
+- Tags auto-lowercase and spaces converted to dashes
 
 **Footer actions:**
-- **Edit** - Modifica il contenuto della nota
-- **Copy** - Copia il testo negli appunti (feedback "Copied!" per 2 sec)
-- **Archive** - Soft-archiva la nota (nasconde da lista, ma non elimina)
-- **Type badge** - Mostra tipo di input (voice/attachment/text)
+- **Edit** - Modify note content
+- **Copy** - Copy text to clipboard (feedback "Copied!" for 2 sec)
+- **Archive** - Soft-archive the note (hides from list, not deleted)
+- **Type badge** - Shows input type (voice/attachment/text)
 
 **Edit mode:**
-- Textarea con tutto il contenuto
-- Bottoni Save (salva e rigenera embedding) e Cancel
-- Impedisce altre azioni mentre in edit
+- Textarea with full content
+- Save (saves and regenerates embedding) and Cancel buttons
+- Prevents other actions while editing
 
 ---
 
 ### 6. **Export**
-Esporta tutte le note come markdown file.
+Export all notes as markdown file.
 
-**Formato:**
+**Format:**
 ```
 # Pulse Export
 
@@ -146,171 +146,171 @@ Tags: [tag1, tag2]
 ...
 ```
 
-**Quando:** Bottone download nella toolbar di Archive
+**Location:** Download button in Archive toolbar
 
 ---
 
 ### 7. **Matching Weights Customization**
-L'utente può personalizzare i 4 pesi del ranking dinamicamente.
+Users can dynamically personalize the 4 ranking factors.
 
 **Slider panel:**
-- 4 slider, ognuno per un fattore (0-100%)
-- **Auto-normalizzazione:** Quando cambi un valore, gli altri si adeguano proporzionalmente per mantenere somma = 1.0
-- Descrizione di ogni metrica
-- Bottone "Reset defaults" per ripristinare (0.70, 0.10, 0.10, 0.10)
-- Bottone "Close"
+- 4 sliders, one per factor (0-100%)
+- **Auto-normalization:** When you change a value, others adjust proportionally to maintain sum = 1.0
+- Description of each metric
+- "Reset defaults" button to restore (0.70, 0.10, 0.10, 0.10)
+- "Close" button
 
-**Dove accedere:** Icon ingranaggio nell'input bar (durante la cattura)
+**Access:** Gear icon in input bar (during capture)
 
-**Storage:** Le scelte vengono salvate in localStorage, persistono tra sessioni
+**Storage:** Choices saved in localStorage, persist across sessions
 
 ---
 
 ### 8. **Sidebar Stats (Desktop Only)**
-Sul desktop, la sidebar sinistra mostra:
-- Logo Pulse con payoff "Your ideas, connected"
-- Navigazione: Capture, Archive
-- **Statistiche:**
-  - **Total** - Numero di note non archiviate
-  - **Merged** - Numero di note che sono state soft-archiviate tramite merge
-- Link versione ("v0.1 · PWA · Offline")
+On desktop, left sidebar shows:
+- Pulse logo with payoff "Your ideas, connected"
+- Navigation: Capture, Archive
+- **Statistics:**
+  - **Total** - Count of unarchived notes
+  - **Merged** - Count of notes soft-archived via merge
+- Version link ("v0.1 · PWA · Offline")
 
 ---
 
 ### 9. **Offline Support**
-L'app funziona completamente offline.
+App works completely offline.
 
-**Comportamento:**
-- **Online:** Salva direttamente nel backend Convex
-- **Offline:** Salva i draft in IndexedDB (browser database)
-- **Status bar:** Banner giallo "Offline — sync pending" quando offline
-- **Sincronizzazione:** Quando torna online, i draft si sincronizzano automaticamente
-- **Suggerimenti:** In offline, i suggerimenti utilizzano embeddings cached client-side
+**Behavior:**
+- **Online:** Saves directly to Convex backend
+- **Offline:** Saves drafts to IndexedDB (browser database)
+- **Status bar:** Yellow banner "Offline — sync pending" when offline
+- **Sync:** When back online, drafts automatically synchronize
+- **Suggestions:** Offline, suggestions use cached client-side embeddings
 
 ---
 
 ### 10. **Onboarding**
-Alla prima apertura (quando stats.total === 0), l'app mostra:
+On first opening (when stats.total === 0), app shows:
 
 **First Note screen:**
-- Titulo "First note"
-- Descrizione "Start with a thought, a goal, or an idea."
-- 3 starter prompts interattivi:
+- Title "First note"
+- Description "Start with a thought, a goal, or an idea."
+- 3 interactive starter prompts:
   - 📌 "A monthly goal" → "My main goal this month is "
   - 💡 "An idea on my mind" → "I have an idea on my mind: "
   - 🎯 "A problem to solve" → "I'm trying to figure out how to solve "
-- Click per inserire il testo nell'input e iniziare
+- Click to insert text into input and start
 
 ---
 
 ### 11. **Soft Archive vs Hard Delete**
-Nessun hard delete. Quando archivi una nota:
-- La nota rimane nel database con flag `isArchived = true`
-- Non appare in lista né nei suggerimenti
-- Puoi recuperarla (teoricamente - feature futura?)
-- Conta nei counter "Merged"
+No hard delete. When you archive a note:
+- Note remains in database with flag `isArchived = true`
+- Doesn't appear in list or suggestions
+- Can be recovered (theoretically - future feature?)
+- Counts in "Merged" counter
 
 ---
 
 ### 12. **Voice Input**
-Usa Web Speech API del browser per dettare note.
+Uses browser's Web Speech API to dictate notes.
 
-**Processo:**
-1. Click icona microfono
-2. Icona diventa rossa con animazione pulse
-3. Dittatura in tempo reale
-4. Al termine, il testo si aggiunge all'input bar
-5. Puoi continuare a digitare o salvare
+**Process:**
+1. Click microphone icon
+2. Icon turns red with pulsing animation
+3. Real-time dictation
+4. On completion, text appends to input bar
+5. Continue typing or save
 
-**Limitazioni:** Dipende da browser/lingua del SO
+**Limitations:** Depends on browser/OS language
 
 ---
 
-### 13. **Soft Archive per Inattività**
-Note non visualizzate/modificate per 3 mesi scadono in soft-archive automatico.
+### 13. **Auto-Archive on Inactivity**
+Notes not viewed/modified for 3 months auto-archive.
 
-**Effetto visivo:** Opacity 40% (hover 70%) per distinguerle
+**Visual effect:** Opacity 40% (hover 70%) to distinguish
 
-**Scopo:** Mantenere focus su note recenti e rilevanti
+**Purpose:** Keep focus on recent and relevant notes
 
 ---
 
 ## User Flows
 
-### Flow 1: Cattura Rapida
-1. Utente apre app (o è già aperta)
-2. Digita nella textarea
-3. Sistema suggerisce note correlate (dopo 30 char + 400ms)
-4. Utente clicca Save (o Enter)
-5. Nota salvata, textarea clearata, suggerimenti scompaiono
+### Flow 1: Quick Capture
+1. User opens app (or already open)
+2. Types into textarea
+3. System suggests related notes (after 30 char + 400ms)
+4. User clicks Save (or Enter)
+5. Note saved, textarea cleared, suggestions disappear
 
-### Flow 2: Merge Consapevole
-1. Utente digita nuova nota
-2. Sistema suggerisce nota precedente correlata
-3. Utente clicca su suggested card → seleziona
-4. Nota appare come merged block con timestamp
-5. Utente può modificare il contenuto del merged block
-6. Clicca Save
-7. Nuova nota creata con tutti i merged blocks, originali archiviate
-8. Toast "Undo" disponibile per 8 sec
+### Flow 2: Conscious Merge
+1. User types new note
+2. System suggests previously-related note
+3. User clicks suggested card → selects it
+4. Note appears as merged block with timestamp
+5. User can edit merged block content
+6. Clicks Save
+7. New note created with all merged blocks, originals archived
+8. "Undo" toast available for 8 sec
 
-### Flow 3: Ricerca in Archivio
-1. Utente apre Archive view
-2. Vede ultima 30 note (paginate)
-3. Digita query in search
-4. Lista si filtra per content match + tag match (case-insensitive)
-5. Clicca su nota per espanderla
-6. Vede contenuto, tag, e footer actions
+### Flow 3: Archive Search
+1. User opens Archive view
+2. Sees last 30 notes (paginated)
+3. Types query in search
+4. List filters by content match + tag match (case-insensitive)
+5. Clicks note to expand
+6. Sees content, tags, and footer actions
 
-### Flow 4: Customizzazione Pesi
-1. Durante cattura, clicca ingranaggio
-2. Panel slider appare
-3. Muove uno slider (es. similarity da 0.70 a 0.50)
-4. Gli altri si auto-aggiustano (recency, interaction, keyword)
-5. Suggerimenti si aggiornano in tempo reale con nuovi pesi
-6. Scelte salvate in localStorage
-7. Chiude panel
+### Flow 4: Weight Customization
+1. During capture, clicks gear icon
+2. Slider panel appears
+3. Moves one slider (e.g., similarity 0.70 → 0.50)
+4. Others auto-adjust (recency, interaction, keyword)
+5. Suggestions update in real-time with new weights
+6. Choices saved in localStorage
+7. Closes panel
 
 ---
 
 ## User Segments
 
-1. **Thought Capturer** - Chi scrive pensieri random, vuole catturare rapidamente
-2. **Idea Organizer** - Chi cerca di connettere idee correlate (merge)
-3. **Knowledge Manager** - Chi vuole ritrovare note precedenti correlate
-4. **Voice-first User** - Chi preferisce dettare
-5. **Offline User** - Chi lavora senza connessione stabile
+1. **Thought Capturer** - Writes random thoughts, wants quick capture
+2. **Idea Organizer** - Seeks to connect related ideas (merge)
+3. **Knowledge Manager** - Wants to find previously-related notes
+4. **Voice-first User** - Prefers dictation
+5. **Offline User** - Works without stable connectivity
 
 ---
 
 ## Key Metrics
 
-- **Engagement:** Numero di note/giorno, merge rate
+- **Engagement:** Notes/day, merge rate
 - **Retention:** DAU, MAU
-- **Quality:** Relevance dei suggerimenti (feedback user?)
-- **Performance:** Latency suggerimenti, offline sync success rate
-- **Adoption:** Voci registrate, allegati utilizzati
+- **Quality:** Suggestion relevance (user feedback?)
+- **Performance:** Suggestion latency, offline sync success rate
+- **Adoption:** Voice recordings used, attachments used
 
 ---
 
 ## Future Roadmap (Potential)
 
-- [ ] Sharing di note (public link)
+- [ ] Note sharing (public link)
 - [ ] Collaboration (multiple users)
-- [ ] Tagging auto-intelligente
-- [ ] Export formati diversi (PDF, JSON)
-- [ ] Ricerca full-text + filtering avanzato
-- [ ] Notifications per notes importanti
-- [ ] Themes personalizzati
-- [ ] Mobile app nativa
+- [ ] Auto-intelligent tagging
+- [ ] Multiple export formats (PDF, JSON)
+- [ ] Advanced full-text search + filtering
+- [ ] Notifications for important notes
+- [ ] Custom themes
+- [ ] Native mobile apps
 
 ---
 
 ## Success Criteria
 
-✅ Utente riesce a catturare note in < 5 sec
-✅ Suggerimenti rilevanti appaiono mentre digita
-✅ Merge di note conserva il contesto
-✅ App funziona offline senza lag
-✅ UI non distrae dalla scrittura
-✅ Ricerca in archivio è istantanea
+✅ User can capture note in < 5 sec
+✅ Relevant suggestions appear while typing
+✅ Merge preserves context of all notes
+✅ App works offline without lag
+✅ UI doesn't distract from writing
+✅ Archive search is instant
