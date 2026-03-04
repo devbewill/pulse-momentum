@@ -131,11 +131,11 @@ export const listBeats = query({
 export const getStats = query({
   args: {},
   handler: async (ctx) => {
-    const todayStart = new Date()
-    todayStart.setHours(0, 0, 0, 0)
-    const weekStart = new Date()
-    weekStart.setDate(weekStart.getDate() - 7)
-    weekStart.setHours(0, 0, 0, 0)
+    // Calculate fixed timestamps (rounded to midnight UTC)
+    // This ensures the query doesn't re-run every millisecond
+    const nowMs = Date.now()
+    const todayStart = Math.floor(nowMs / (24 * 3600 * 1000)) * (24 * 3600 * 1000)
+    const weekStart = todayStart - 7 * 24 * 3600 * 1000
 
     const [totalDocs, weekDocs, todayDocs] = await Promise.all([
       ctx.db
@@ -145,13 +145,13 @@ export const getStats = query({
       ctx.db
         .query('beats')
         .withIndex('by_created', (q) =>
-          q.eq('isArchived', false).gte('createdAt', weekStart.getTime())
+          q.eq('isArchived', false).gte('createdAt', weekStart)
         )
         .collect(),
       ctx.db
         .query('beats')
         .withIndex('by_created', (q) =>
-          q.eq('isArchived', false).gte('createdAt', todayStart.getTime())
+          q.eq('isArchived', false).gte('createdAt', todayStart)
         )
         .collect(),
     ])

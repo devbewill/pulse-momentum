@@ -382,27 +382,28 @@ function PulseCard({
               onUpdate={(tags) => onTagsUpdate(beat._id, tags)}
             />
 
-            {/* Footer actions */}
-            <div className="mt-4 flex items-center gap-2 border-t border-zinc-200 pt-4">
-              <span className="font-mono text-[12px] font-bold uppercase tracking-widest text-zinc-400">
-                {beat.inputType === 'voice' ? '🎙 voce' : beat.inputType === 'attachment' ? '📎 allegato' : '✦ testo'}
+            {/* Footer actions — minimal */}
+            <div className="mt-4 border-t border-zinc-200 pt-4 flex items-center justify-between">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-400">
+                type: {beat.inputType === 'voice' ? 'voce' : beat.inputType === 'attachment' ? 'allegato' : 'testo'}
               </span>
-              <div className="flex-1" />
-              {/* Copy button */}
-              <button
-                onClick={handleCopy}
-                className="border border-zinc-200 px-3 py-2 text-[13px] font-bold uppercase tracking-wider text-zinc-500 transition-all hover:border-zinc-950 hover:text-zinc-950"
-              >
-                {copied ? 'Copiato!' : 'Copia'}
-              </button>
-              {/* Archive button */}
-              <button
-                onClick={() => onArchive(beat._id)}
-                disabled={isArchiving}
-                className="border border-zinc-200 px-3 py-2 text-[13px] font-bold uppercase tracking-wider text-zinc-500 transition-all hover:border-red-400 hover:bg-red-50 hover:text-red-600 disabled:opacity-30"
-              >
-                {isArchiving ? 'Archiviando…' : 'Archivia'}
-              </button>
+              <div className="flex items-center gap-2">
+                {/* Copy button */}
+                <button
+                  onClick={handleCopy}
+                  className="border border-zinc-200 px-3 py-2 text-[13px] font-bold uppercase tracking-wider text-zinc-500 transition-all hover:border-zinc-950 hover:text-zinc-950"
+                >
+                  {copied ? 'Copiato!' : 'Copia'}
+                </button>
+                {/* Archive button */}
+                <button
+                  onClick={() => onArchive(beat._id)}
+                  disabled={isArchiving}
+                  className="border border-zinc-200 px-3 py-2 text-[13px] font-bold uppercase tracking-wider text-zinc-500 transition-all hover:border-red-400 hover:bg-red-50 hover:text-red-600 disabled:opacity-30"
+                >
+                  {isArchiving ? 'Archiviando…' : 'Archivia'}
+                </button>
+              </div>
             </div>
           </div>
         </div>

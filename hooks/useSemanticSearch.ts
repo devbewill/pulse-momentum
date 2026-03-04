@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { useAction } from 'convex/react'
 import { api } from '@/convex/_generated/api'
 import { generateEmbedding } from '@/lib/embeddings'
 import { rankSuggestions } from '@/lib/utils/ranking'
+import { useMatchingWeights } from '@/hooks/useMatchingWeights'
 import type { Beat, BeatSuggestion } from '@/types'
 import {
   SEARCH_DEBOUNCE_MS,
@@ -15,6 +16,9 @@ import {
 } from '@/lib/config/matching'
 
 export function useSemanticSearch(query: string) {
+  const { weights } = useMatchingWeights()
+  // Memoize weights to avoid causing infinite loops in useEffect deps
+  const weightsKey = useMemo(() => JSON.stringify(weights), [weights.similarity, weights.recency, weights.interaction, weights.keyword])
   console.log('[Pulse] useSemanticSearch render, query length:', query.length)
   const [suggestions, setSuggestions] = useState<BeatSuggestion[]>([])
   const [isSearching, setIsSearching] = useState(false)
@@ -56,7 +60,8 @@ export function useSemanticSearch(query: string) {
 
         const ranked = rankSuggestions(
           filtered.map((r) => ({ beat: r.beat, similarity: r.score })),
-          trimmed
+          trimmed,
+          weights
         )
           .filter((s) => s.score >= MIN_COMPOSITE_SCORE)
           .slice(0, MAX_SUGGESTIONS)
@@ -74,7 +79,7 @@ export function useSemanticSearch(query: string) {
     return () => {
       abortRef.current = true
     }
-  }, [query, searchSimilar])
+  }, [query, searchSimilar, weightsKey])
 
   return { suggestions, isSearching }
 }

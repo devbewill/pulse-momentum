@@ -2,6 +2,7 @@
 
 import { useRef, useCallback, useState, useEffect, KeyboardEvent, DragEvent } from 'react'
 import { useVoice } from '@/hooks/useVoice'
+import { MatchingWeightsPanel } from '@/components/ui/MatchingWeightsPanel'
 import type { MergedBlock } from '@/types'
 import { relativeTime } from '@/lib/utils/time'
 
@@ -30,6 +31,7 @@ export function InputBar({
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [isFocused, setIsFocused] = useState(false)
+  const [showWeightsPanel, setShowWeightsPanel] = useState(false)
 
   const handleTranscript = useCallback(
     (transcript: string) => onChange(value ? `${value} ${transcript}` : transcript),
@@ -130,7 +132,7 @@ export function InputBar({
         </div>
 
         {/* Toolbar */}
-        <div className="flex items-center justify-between border-t border-zinc-100 px-4 py-3">
+        <div className="relative flex items-center justify-between border-t border-zinc-100 px-4 py-3">
           <div className="flex items-center gap-0.5">
             {/* Attach */}
             <button
@@ -169,6 +171,25 @@ export function InputBar({
                 </svg>
               )}
             </button>
+
+            {/* Settings — matching weights */}
+            <button
+              type="button"
+              onClick={() => setShowWeightsPanel(!showWeightsPanel)}
+              className={[
+                'flex h-8 w-8 items-center justify-center transition-colors',
+                showWeightsPanel
+                  ? 'text-zinc-950'
+                  : 'text-zinc-400 hover:text-zinc-950',
+              ].join(' ')}
+              title="Impostazioni matching weights"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="1" />
+                <circle cx="19" cy="12" r="1" />
+                <circle cx="5" cy="12" r="1" />
+              </svg>
+            </button>
           </div>
 
           {/* Send — neon CTA */}
@@ -193,6 +214,13 @@ export function InputBar({
             )}
           </button>
         </div>
+
+        {/* Weights panel popover */}
+        {showWeightsPanel && (
+          <div className="absolute bottom-full right-0 mb-2 z-50">
+            <MatchingWeightsPanel onClose={() => setShowWeightsPanel(false)} />
+          </div>
+        )}
       </div>
     </div>
   )
