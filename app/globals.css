@@ -1,26 +1,99 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --font-geist: 'Geist', system-ui, sans-serif;
+  --neon: #B5FF4D;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  overscroll-behavior: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ─── Scrollbar ──────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 0; }
+
+/* ─── ✦ Brand mark — neon pulse ─────────────────────────────────────────── */
+@keyframes star-glow {
+  0%, 100% { opacity: 0.85; }
+  50%       { opacity: 1;    }
+}
+.star-glow { animation: star-glow 2.5s ease-in-out infinite; }
+
+/* ─── Suggestion row entry ───────────────────────────────────────────────── */
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.suggestion-enter {
+  opacity: 0;
+  animation: slide-up 0.18s ease-out forwards;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ─── Pulse card entry ───────────────────────────────────────────────────── */
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
+.pulse-card-enter {
+  opacity: 0;
+  animation: card-in 0.2s ease-out forwards;
+}
+
+/* ─── Archive out ────────────────────────────────────────────────────────── */
+@keyframes card-out {
+  to { opacity: 0; transform: translateX(-8px); }
+}
+.pulse-archiving {
+  animation: card-out 0.18s ease-out forwards;
+  pointer-events: none;
+}
+
+/* ─── Smooth card expand — CSS grid trick ────────────────────────────────── */
+.pulse-expand {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 260ms ease-out;
+}
+.pulse-expand[aria-expanded="true"]  { grid-template-rows: 1fr; }
+.pulse-expand > * { overflow: hidden; }
+
+/* ─── Tagline entry ──────────────────────────────────────────────────────── */
+@keyframes tagline-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.tagline-enter { animation: tagline-in 0.4s ease-out forwards; }
+
+/* ─── Empty state ✦ ─────────────────────────────────────────────────────── */
+@keyframes star-pulse {
+  0%, 100% { opacity: 0.3; }
+  50%       { opacity: 0.7; }
+}
+.star-pulse { animation: star-pulse 3s ease-in-out infinite; }
+
+/* ─── Block divider fade ─────────────────────────────────────────────────── */
+@keyframes block-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.block-enter {
+  opacity: 0;
+  animation: block-in 0.25s ease-out forwards;
+}
+
+/* ─── Neon send button ───────────────────────────────────────────────────── */
+.send-btn:not(:disabled):hover {
+  box-shadow: 0 0 0 3px rgba(181,255,77,0.35);
+}
+
+/* ─── Undo toast slide in ────────────────────────────────────────────────── */
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.toast-enter { animation: toast-in 0.2s ease-out forwards; }

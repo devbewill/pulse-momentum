@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Convex generated files (re-created by `npx convex dev`)
+convex/_generated/
+
+# Env files
+.env.local
+.env.production
